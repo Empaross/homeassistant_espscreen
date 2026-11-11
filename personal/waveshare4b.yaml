@@ -1,0 +1,18 @@
+# Fork entry for a Waveshare 4B. Packages, components and fonts follow the same fork branch.
+substitutions:
+  GITHUB_REF: "personal/standby-zero-screensaver"
+  FONT_DIR: "https://raw.githubusercontent.com/Empaross/homeassistant_espscreen/${GITHUB_REF}/fonts"
+
+packages:
+  core: !include ../packages/core.yaml
+  board: !include ../packages/boards/waveshare-esp32s3-4b.yaml
+  hotspot: !include ../packages/features/hotspot.yaml
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/Empaross/homeassistant_espscreen.git
+      ref: ${GITHUB_REF}
+      path: components
+    refresh: 0s
+    components: [smart_display]

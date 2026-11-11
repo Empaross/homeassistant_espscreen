@@ -19,6 +19,7 @@ substitutions:
   SCREEN_FIRMWARE_VERSION: "0.60.0"
   DASHBOARD_INBOX_INTERNAL: "false"
   CALIBRATION_ON_BOOT: "false"                     # a bench build: start on the touch test page
+  ZERO_BRIGHTNESS_DARK: "true"                     # false: keep drawing and allow the screensaver at standby level 0
   ROOM_NAME: ""                                    # top left until ESP Screens sends the screen name
   # The language of every text on the screen (app 0.2.90): a file in screen_manager/translations, English for any
   # text it lacks. ESP Screens writes it into the screen's own YAML, from Home Assistant's language or its Settings.
@@ -281,7 +282,7 @@ esphome:
           // Saving power while the glass is dark (screen_power.h): LVGL pauses, and Wi-Fi dozes.
           screen_power::freeze = [](bool on) { id(screen_lvgl).set_paused(on, false); ESP_LOGI("power", on ? "dark: saving" : "awake"); };
           screen_power::later = [](uint32_t ms) { id(screen_power_wait).execute(ms); };
-          screen_power::dark = []() { return id(display_dimmed) && runtime_tiles::standby_level() == 0; };
+          screen_power::dark = []() { return screen_power::dark_level(id(display_dimmed), runtime_tiles::standby_level(), std::string("${ZERO_BRIGHTNESS_DARK}") == "true"); };
           screen_power::wake = []() { id(wake_display).execute(); };
           // Feedback a finger hears or feels (touch_feedback.h): none for the push that wakes a dimmed screen, nor in a calibration.
           touch_feedback::quiet = []() { return id(display_dimmed) || id(calibration_active); };
@@ -1605,7 +1606,7 @@ sensor:
     lambda: |-
       #ifdef USE_ESP32
         if (!heap_caps_get_total_size(MALLOC_CAP_SPIRAM)) return 0;
-        if (!id(display_dimmed) || runtime_tiles::standby_level() != 0) return {};
+        if (!screen_power::dark_level(id(display_dimmed), runtime_tiles::standby_level(), std::string("${ZERO_BRIGHTNESS_DARK}") == "true")) return {};
         return heap_caps_get_largest_free_block(MALLOC_CAP_SPIRAM);
       #else
         return 0;
@@ -2454,13 +2455,14 @@ script:
           ${APPLY_BACKLIGHT}
           // Dark (standby or Sleep at level 0): the power saving of screen_power.h, once the backlight has faded out.
           // ESPHome puts its own Wi-Fi mode back when it connects again: a dark screen dozes again within the minute.
-          if (id(display_dimmed) && level == 0) { if (screen_power::saving) screen_power::doze_wifi(true); else screen_power::rest(); }
+          const bool zero_is_dark = std::string("${ZERO_BRIGHTNESS_DARK}") == "true";
+          if (screen_power::dark_level(id(display_dimmed), level, zero_is_dark)) { if (screen_power::saving) screen_power::doze_wifi(true); else screen_power::rest(); }
           else { id(screen_power_wait).stop(); screen_power::leave(); }
           if (id(display_dimmed)) { lv_obj_clear_flag(id(dim_wake_overlay), LV_OBJ_FLAG_HIDDEN); lv_obj_move_foreground(id(dim_wake_overlay)); }
           else lv_obj_add_flag(id(dim_wake_overlay), LV_OBJ_FLAG_HIDDEN);
           // The screensaver (firmware 0.29.0+) in standby, at the standby level: it lies over everything on the top layer
           // without a tap of its own, so the overlay takes the touch. Sleep pressed in Home Assistant stays without it.
-          runtime_tiles::saver_sync(id(display_dimmed) && !id(sleep_requested) && level > 0);
+          runtime_tiles::saver_sync(screen_power::show_saver(id(display_dimmed), id(sleep_requested), level, zero_is_dark));
           // The setting numbers and times only publish a changed value (HA keeps identical states anyway); the
           // switches publish their own changes. An open settings page shows a change from Home Assistant too.
           // A number without a state publishes too: a night brightness of 0 equals the number's initial state and
