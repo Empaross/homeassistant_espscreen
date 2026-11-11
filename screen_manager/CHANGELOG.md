@@ -1,3 +1,7 @@
+## Unreleased
+
+- Allow custom builds to keep the standby screensaver drawing at 0% brightness with `ZERO_BRIGHTNESS_DARK: "false"`.
+
 ## 0.4.99 (firmware 0.62.0)
 
 - **A screen draws every change whole again.** On the ESP32-P4 boards (the Guition and Waveshare 10.1 and 7 inch, the reTerminal D1001, the Tab5) a card that opened, a change of Dark mode or a page could reach the glass only in part since 0.4.98: the frame or a few blocks turned while the rest of the page stayed as it was. The pictures of whole pages these screens kept to show a page sooner (0.4.98) read the screen's memory in a way that could throw away what had just been drawn. They are gone; a page turn is drawn as before 0.4.98, which takes a moment longer on a 10-inch, and the memory they held goes to covers and cameras again.
@@ -58,7 +62,6 @@
 - **The screen's own camera on a tile is much smoother.** It now shows up to 15 pictures a second instead of the share of a network camera (up to 6, and 1.5 while someone watched the video with sound), about 8 to 10 next to other live tiles. Network camera tiles go up to 10 pictures a second instead of 6, and slow down less while someone listens to the screen's microphone: to half instead of a quarter.
 - **Remove a plugin you were making from the Plugins page.** A plugin in a folder of `config/tessera-plugins/` that no screen runs any more now has Remove in its details, as a plugin added with a link already had. The app moves its folder to `config/tessera-plugins/.removed/`, so nothing of your work is lost; delete it there when you are sure.
 - **Tessera is looking for funding.** The home overview asks for it, before the support card, with a button that mails Max: a day job comes first, and Tessera needs funding to stay alive. "Not now" puts it away for a week.
-
 ## 0.4.97 (firmware 0.60.0)
 
 - **Replacing a screen in New screen takes the old screen out of Tessera too.** In 0.4.96 only its device left Home Assistant, and its profile stayed in the sidebar as a screen still waiting for its firmware. The old screen now goes the way Remove takes it: out of Home Assistant, its YAML out of the ESPHome folder, and everything Tessera kept for it.

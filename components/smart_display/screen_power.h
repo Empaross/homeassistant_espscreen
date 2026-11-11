@@ -35,6 +35,14 @@ inline void (*wake)() = nullptr;           // wakes the screen
 
 constexpr uint32_t REST_MS = 2000, SETTLE_MS = 100, TAP_MS = 30;
 
+inline bool dark_level(bool dimmed, int level, bool zero_is_dark) {
+  return dimmed && level == 0 && zero_is_dark;
+}
+
+inline bool show_saver(bool dimmed, bool sleep_requested, int level, bool zero_is_dark) {
+  return dimmed && !sleep_requested && (level > 0 || !zero_is_dark);
+}
+
 inline bool saving = false, touching = false, settling = false, was_tap = false;
 inline uint32_t touch_start = 0;
 

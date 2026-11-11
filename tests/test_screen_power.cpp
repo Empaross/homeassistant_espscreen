@@ -1,6 +1,7 @@
 #include "components/smart_display/screen_power.h"
 #include <cassert>
 #include <cstdio>
+#include <initializer_list>
 using namespace screen_power;
 
 static bool paused = false, dark_now = false;
@@ -8,6 +9,23 @@ static int pauses = 0, wakes = 0;
 static uint32_t waited = 0;
 
 int main() {
+  assert(dark_level(true, 0, true));
+  assert(!dark_level(true, 0, false));
+  assert(!show_saver(true, false, 0, true));
+  assert(show_saver(true, false, 0, false));
+  assert(show_saver(true, false, 5, true));
+  assert(!show_saver(true, true, 0, false));
+  for (bool zero_is_dark : {false, true}) {
+    for (bool dimmed : {false, true}) {
+      for (bool sleep : {false, true}) {
+        for (int level : {0, 5}) {
+          assert(dark_level(dimmed, level, zero_is_dark) == (dimmed && level == 0 && zero_is_dark));
+          assert(show_saver(dimmed, sleep, level, zero_is_dark) ==
+                 (dimmed && !sleep && (level > 0 || !zero_is_dark)));
+        }
+      }
+    }
+  }
   freeze = [](bool on) { paused = on; pauses++; };
   later = [](uint32_t ms) { waited = ms; };
   dark = [] { return dark_now; };

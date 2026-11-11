@@ -128,6 +128,12 @@ glass. Their camera pictures and album covers keep refreshing then, as they do w
 level is 5 % or more (firmware 0.40.0). Under a screensaver, the clock too, and on a darker glass they wait until the
 screen wakes.
 
+Normally at 0 % the backlight is off, drawing pauses and no screensaver is shown. A custom build can set the
+`ZERO_BRIGHTNESS_DARK` substitution to `"false"` to keep drawing and allow the screensaver at 0 % in auto standby.
+This does not change the backlight output: a panel whose backlight goes fully off still cannot show a visible clock at
+0 %. Sleep continues to skip the screensaver. The PSRAM largest-block diagnostic waits for another opportunity while
+this option is off, since walking the heap while an RGB panel is drawing can shift a frame.
+
 The CYD, the Waveshare 3.5-inch and the Hosyond 4-inch have no memory for pictures (see [CAMERA.md](CAMERA.md)). On
 them the card offers the clock alone. The Waveshare 4.3, 5 and 7-inch never go into standby, so they have no
 screensaver either.
