@@ -63,7 +63,8 @@ the camera or the clock, since a speaker stays paused in Home Assistant for days
   glass gives as little light as it can (firmware 0.31.0; before, it stood in the screen's own colours). On 12 hours AM
   or PM stands after the time. Small in the middle at the bottom is the outside temperature: Home Assistant's forecast
   for its home (Met.no's, else its first weather entity) unless you choose one under the clock in the editor (or none), whole degrees in the unit Home
-  Assistant is set to (app 0.4.52).
+  Assistant is set to (app 0.4.52). In a custom build with `ZERO_BRIGHTNESS_DARK: "false"`, the digital clock's ink is
+  reduced to 25% at a 0% standby level, for panels whose backlight still leaks light when set to zero.
 
 **Entities on the clock** (app 0.4.81, firmware 0.50.0). In the drawer of Clock, under the temperature, **Add an
 entity** puts up to four entities in the same line as the temperature: a sensor, a door, a lamp, anything the top bar

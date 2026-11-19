@@ -41,7 +41,8 @@ inline void saver_clock_draw() {
   // Black with white digits in both looks (firmware 0.31.0+): a screensaver gives as little light as it can. Before,
   // the clock stood on the page's own colour, a lit white glass in the light look.
   lv_obj_set_style_bg_color(saver_root, theme::color(theme::CAMERA_PAGE), 0);
-  const uint32_t ink = media_ink(), soft = theme::mix(ink, theme::hex(theme::CAMERA_PAGE), 150);
+  const uint32_t ink = saver_view::zero_level_ink(media_ink(), standby_level() == 0);
+  const uint32_t soft = theme::mix(ink, theme::hex(theme::CAMERA_PAGE), 150);
   const auto l = saver_view::clock(width, height, digits_h, date.empty() ? 0 : date_h, date.empty() ? 0 : gap);
   const int time_w = digits ? text_width(time, digits) : width;
   const auto row = saver_view::clock_row(width, time_w, ampm_w, space);

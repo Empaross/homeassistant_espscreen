@@ -128,6 +128,9 @@ static void a_plugin_saver_is_painted_in_place_or_made_anew() {
 int main() {
   a_plugin_saver_is_painted_in_place_or_made_anew();
   drift_moves_within_its_circle();
+  assert(zero_level_ink(0xF2F2F2, false) == 0xF2F2F2);
+  assert(zero_level_ink(0xF2F2F2, true) == 0x3C3C3C);
+  assert(zero_level_ink(0x123456, true) == 0x040D15);
   words_on_every_glass();
   keys_on_every_glass();
   clock_in_the_middle();

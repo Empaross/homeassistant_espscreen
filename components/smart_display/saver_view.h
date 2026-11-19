@@ -24,6 +24,14 @@ inline Shape shape(int width, int height) {
   return width > height ? Shape::side : Shape::top;
 }
 
+// Keep the digital clock readable but dim when a 0% standby level still leaks light through the panel.
+inline uint32_t zero_level_ink(uint32_t color, bool zero_level) {
+  if (!zero_level) return color;
+  uint32_t out = 0;
+  for (int shift = 16; shift >= 0; shift -= 8) out |= (((color >> shift) & 0xFF) / 4) << shift;
+  return out;
+}
+
 // The title and the line under it. Over a picture that fills the glass they stand at the bottom left; beside or under
 // a cover they stand in the cover's colour, in the middle of that room, left-aligned at its margin.
 struct Words { Rect first, second; };

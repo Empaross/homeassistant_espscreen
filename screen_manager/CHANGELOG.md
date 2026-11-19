@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Allow custom builds to keep the standby screensaver drawing at 0% brightness with `ZERO_BRIGHTNESS_DARK: "false"`.
+- Dim the digital screensaver clock's ink to 25% at a 0% standby brightness, for panels with backlight light leak.
 
 ## 0.4.99 (firmware 0.62.0)
 
